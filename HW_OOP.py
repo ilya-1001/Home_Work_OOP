@@ -1,6 +1,3 @@
-from statistics import mean
-
-
 class Student:
     def __init__(self, name, surname, gender):
         self.name = name
@@ -21,16 +18,23 @@ class Student:
             return 'Ошибка'
 
     def __str__(self):
-        return (f'\nИмя: {self.name} \nФамилия: {self.surname} '
-                f'\nСредняя оценка за домашнее задание: {self.average_grades()} '
-                f'\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)} '
-                f'\nЗавершенные курсы: {", ".join(self.finished_courses)}')
+        res = f'\nИмя: {self.name} \nФамилия: {self.surname}\n'
+        res += f'Средняя оценка за домашнее задание: {self.average_grades()}\n'
+        res += f'Курсы в процессе изучения: {", ".join(self.courses_in_progress)}\n'
+        res += f'Завершенные курсы: {", ".join(self.finished_courses)}\n'
+        return res
 
     def average_grades(self):
         grades = []
         for x in list(self.grades.values()):
             grades.extend(x)
         return round(sum(grades) / len(grades), 1)
+
+    def __lt__(self, other):
+        if isinstance(other, Student):
+            return self.average_grades() < other.average_grades()
+        else:
+            return 'Ошибка'
 
 
 class Mentor:
@@ -46,14 +50,21 @@ class Lecturer(Mentor):
         self.grades = {}
 
     def __str__(self):
-        return (f'\nИмя: {self.name} \nФамилия: {self.surname} '
-                f'\nСредняя оценка за лекции: {self.average_grades()}')
+        res = f'\nИмя: {self.name} \nФамилия: {self.surname}\n'
+        res += f'Средняя оценка за лекции: {self.average_grades()}\n'
+        return res
 
     def average_grades(self):
         grades = []
         for x in list(self.grades.values()):
             grades.extend(x)
         return round(sum(grades) / len(grades), 1)
+
+    def __lt__(self, other):
+        if isinstance(other, Lecturer):
+            return self.average_grades() < other.average_grades()
+        else:
+            return 'Ошибка'
 
 
 class Reviewer(Mentor):
@@ -121,15 +132,16 @@ reviewer_1.rate_hw(student_2, 'PHP', 8)
 reviewer_2.rate_hw(student_1, 'Python', 9)
 reviewer_2.rate_hw(student_2, 'Python', 5)
 
-print(student_1.grades, student_2.grades)
-print(lecturer_1.grades, lecturer_2.grades)
+print('Оценки студентов:', student_1.grades, student_2.grades)
+print('Оценки лекторов:', lecturer_1.grades, lecturer_2.grades)
 
-print(student_1.average_grades(), student_2.average_grades())
-print(lecturer_1.average_grades(), lecturer_2.average_grades())
+print(f'Средние оценки студентов: {student_1.average_grades()}, {student_2.average_grades()}')
+print(f'Средние оценки лекторов: {lecturer_1.average_grades()}, {lecturer_2.average_grades()}')
 
-print(student_1.average_grades() > student_2.average_grades())
-print(lecturer_1.average_grades() < lecturer_2.average_grades())
-print(student_1.average_grades() > lecturer_2.average_grades())
+print('Средние оценки всех студентов по курсу:', student_average_rating(study, 'Python'))
+
+print('Сравнение оценок студентов:', student_1 > student_2)
+print('Сравнение оценок лекторов:', lecturer_1 < lecturer_2)
+print('Неверное сравнение:', student_1 > lecturer_2)
 
 print(student_1, student_2, lecturer_1, lecturer_2)
-print(student_average_rating(study, 'Python'))
